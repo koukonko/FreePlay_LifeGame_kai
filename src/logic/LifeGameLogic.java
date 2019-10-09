@@ -21,11 +21,11 @@ public class LifeGameLogic {
 	private int[][] box = null;
 	// シリアルキラー(ランダムに移動する)
 	private SerialKiller sk = null;
-	// 絶対殺すマン
+	// 絶対死範囲
 	private AbsKiller ak = null;
 
 	public LifeGameLogic(int[][] cell) {
-		// シリアルキラー爆誕！
+		// シリアルキラー
 		// sk = new SerialKiller(175, cell);
 		// 絶対死の範囲
 		// ak = new AbsKiller();
@@ -60,13 +60,12 @@ public class LifeGameLogic {
 		// シリアルキラーを動かす
 		// sk.move(nextGene);
 
-		// 絶対殺すマン
+		// 絶対死
 		// ak.killerPuts(nextGene);
 
 		/*
-		 * alfabet用のプログラム
+		 * alfabet用のプログラム(ファイルを読み込み生存セルを設定)
 		 */
-
 		boolean test_flag = false;
 		final int HEIGHT = 81, WIDTH = 364;
 		if (read == null) {
@@ -102,6 +101,8 @@ public class LifeGameLogic {
 				}
 			}
 		}
+		
+		// 次世代のセルへデータを移行
 		for (int i = 0; i < HEIGHT; ++i) {
 			for (int j = 0; j < WIDTH; ++j) {
 				if (box[i][j] == 0) {
@@ -117,10 +118,12 @@ public class LifeGameLogic {
 		return nextGene;
 	}
 
+	// 生存セルの周囲チェック
 	public int aliveCell(int[][] tmpGene, int x, int y) {
 		int count = 0;
 		double countDouble = 0;
 
+		// 巡回用配列
 		int[][] circu = { { -1, -1 }, // 左上
 				{ 0, -1 }, // 上
 				{ 1, -1 }, // 右上
@@ -131,6 +134,7 @@ public class LifeGameLogic {
 				{ -1, 0 } // 左
 		};
 
+		// 巡回時の重み設定
 		double[] circuDouble = { 0.035, // 左上
 				0.065, // 上
 				0.750, // 右上
@@ -142,7 +146,7 @@ public class LifeGameLogic {
 		};
 
 		for (int i = 0; i < circu.length; ++i) {
-
+			// 周囲の生存セルのチェック
 			if (tmpGene[x - circu[i][0]][y - circu[i][1]] == 1) {
 				count++;
 				countDouble += circuDouble[i];
@@ -150,6 +154,7 @@ public class LifeGameLogic {
 
 		}
 
+		// 生存数等によって生存するか判定する
 		// if ((count >= 3 || count <= 5) || (countDouble >= 0.75)) {
 		if ((count >= 3 && count <= 5)) {
 			return 1;
@@ -158,9 +163,11 @@ public class LifeGameLogic {
 		}
 	}
 
+	// 死亡セルの周囲チェック
 	public int deadCell(int[][] box, int x, int y) {
 		int count = 0;
 
+		// 巡回用配列
 		int[][] circu = { { -1, -1 }, // 左上
 				{ 0, -1 }, // 上
 				{ 1, -1 }, // 右上
@@ -176,12 +183,14 @@ public class LifeGameLogic {
 		 * 0 } // 左 };
 		 */
 
+		// 周囲の生存をチェック
 		for (int i = 0; i < circu.length; ++i) {
-
 			if (box[x - circu[i][0]][y - circu[i][1]] == 1) {
 				count++;
 			}
 		}
+		
+		// 周囲の生存数によって生存するか判定
 		// if (count == 3 || (count >= 5 && count <= 6)) {
 		if (count == 3) {
 			return 1;
